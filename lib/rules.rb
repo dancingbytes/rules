@@ -13,13 +13,7 @@ module Rules
 
   class << self
 
-    def user=(usr_id)
-      @user = usr_id
-    end # user
-
-    def user
-      @user
-    end # user
+    attr :user, true
 
     def class_for(o)
 
@@ -28,10 +22,22 @@ module Rules
 
     end # class_for
 
+    def groups(hash)
+
+      ::Rules::List.groups(hash)
+      self
+
+    end # groups
+
+    def add_group(name, *args)
+
+      ::Rules::List.add_group(name, args)
+      self
+
+    end # add_group
+
     def can!(context, meth)
-
       raise ::Rules::AccessDenideError, "You have no rights to access for method `#{meth}`"
-
     end # can!
 
   end # class << self

@@ -3,7 +3,7 @@ module Rules
 
   class Builder
 
-    def initialize(context, name, methods = [])
+    def initialize(context, name, methods = [], opts = {})
 
       @context  = context
       @methods  = methods
@@ -18,7 +18,8 @@ module Rules
 
       ::Rules::List[context.to_s] = {
         :name    => name,
-        :methods => methods
+        :methods => methods,
+        :opts    => opts
       }
 
       @methods.each do |meth|

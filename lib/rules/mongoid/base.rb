@@ -5,10 +5,15 @@ module Rules
 
     module Base
 
-      def rule(name, *args)
+      def rule(name, *args, opts)
 
-        raise ::Rules::ParamsError, "Parameter `name` must be a string" unless name.is_a?(String)
-        ::Rules::Builder.new(self, name, args.map(&:to_sym))
+        raise ::Rules::ParamsError, "First parameter must be a string" unless name.is_a?(String)
+
+        unless opts.is_a?(Hash)
+          args << opts; opts = {}
+        end
+
+        ::Rules::Builder.new(self, name, args.map(&:to_sym), opts)
 
       end # rule
 
