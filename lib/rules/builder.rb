@@ -5,8 +5,7 @@ module Rules
 
     def initialize(context, name, methods = [], opts = {})
 
-      @context  = context
-      @methods  = methods
+      @context = context
 
       if ::Rules::List.has?(@context.to_s)
 
@@ -22,7 +21,7 @@ module Rules
         :opts    => opts
       }
 
-      @methods.each do |meth|
+      methods.each do |meth|
 
         class_method(meth)    if @context.respond_to?(meth, true)
         instance_method(meth) if @context.method_defined?(meth)

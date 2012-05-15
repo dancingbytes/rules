@@ -14,7 +14,6 @@ Rails:  3.1, 3.2
 ### DSL example
 
     # In model
-
     class User
 
       include Mongoid::Document
@@ -28,7 +27,6 @@ Rails:  3.1, 3.2
 
 
     # You may create file into "/path/to/you_app/config/initializers" with content:
-
     Rules.groups({
 
       :create   => [:create, :save],

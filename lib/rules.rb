@@ -1,12 +1,14 @@
 # encoding: utf-8
-require 'rules/version'
 require 'rules/list'
-require 'rules/errors'
 require 'rules/interceptor'
 require 'rules/methods'
 require 'rules/builder'
 
 module Rules
+
+  class ParamsError < ::StandardError; end
+  class DuplicateDefinitionError < ::StandardError; end
+  class AccessDenideError < ::StandardError; end
 
   MONGOID = defined?(::Mongoid)
   AR      = defined?(::ActiveRecord)
