@@ -4,7 +4,7 @@ if Rules.class_exists?("UserRule")
 else
 
   class UserRule
-    include Rules::UserRule
+    include ::Rules::UserRule
   end
 
 end # if
