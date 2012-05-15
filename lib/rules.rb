@@ -6,43 +6,48 @@ require 'rules/builder'
 
 module Rules
 
+  extend self
+
   class ParamsError < ::StandardError; end
   class DuplicateDefinitionError < ::StandardError; end
   class AccessDenideError < ::StandardError; end
 
-  MONGOID = defined?(::Mongoid)
-  AR      = defined?(::ActiveRecord)
+  MONGOID = defined?(::Mongoid) ? true : false
+  AR      = defined?(::ActiveRecord) ? true : false
 
-  class << self
+  attr :user, true
 
-    attr :user, true
+  def class_for(o)
 
-    def class_for(o)
+    klass = o.class
+    klass == klass.class ? o : klass
 
-      klass = o.class
-      klass == klass.class ? o : klass
+  end # class_for
 
-    end # class_for
+  def groups(hash)
 
-    def groups(hash)
+    ::Rules::List.groups(hash)
+    self
 
-      ::Rules::List.groups(hash)
-      self
+  end # groups
 
-    end # groups
+  def add_group(name, *args)
 
-    def add_group(name, *args)
+    ::Rules::List.add_group(name, args)
+    self
 
-      ::Rules::List.add_group(name, args)
-      self
+  end # add_group
 
-    end # add_group
+  def env
 
-    def can!(context, meth)
-      raise ::Rules::AccessDenideError, "You have no rights to access for method `#{meth}`"
-    end # can!
+    return ::Rails.env if defined?(::Rails)
+    ENV["RACK_ENV"]
 
-  end # class << self
+  end # env
+
+  def can!(context, meth)
+    raise ::Rules::AccessDenideError, "You have no rights to access method `#{meth}`"
+  end # can!
 
 end # Rules
 

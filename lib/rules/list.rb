@@ -18,6 +18,10 @@ module Rules
 
     class << self
 
+      def all
+        instance.all
+      end # all
+
       def add_group(name, methods)
         instance.add_group(name, methods)
       end # add_group
@@ -43,6 +47,10 @@ module Rules
       end # has_rule_for?
 
     end # class << self
+
+    def all
+      @hash
+    end # all
 
     def add_group(name, methods)
 
