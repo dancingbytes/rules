@@ -15,7 +15,7 @@ module Rules
   MONGOID = defined?(::Mongoid) ? true : false
   AR      = defined?(::ActiveRecord) ? true : false
 
-  attr :user, true
+  attr :user_id, true
 
   def class_for(o)
 
@@ -38,15 +38,27 @@ module Rules
 
   end # add_group
 
-  def env
+  def class_exists?(class_name)
 
-    return ::Rails.env if defined?(::Rails)
-    ENV["RACK_ENV"]
+    return false if class_name.blank?
 
-  end # env
+    begin
+      ::Object.const_defined?(class_name) ? ::Object.const_get(class_name) : ::Object.const_missing(class_name)
+    rescue => e
+      return false if e.instance_of?(::NameError)
+      raise e
+    end
+
+  end # class_exists?
 
   def can!(context, meth)
-    raise ::Rules::AccessDenideError, "You have no rights to access method `#{meth}`"
+
+    return unless ::Rules::List.has_rule_for?(context, meth)
+
+    unless ::UserRule.access_for(::Rules.user_id, context, meth)
+      raise ::Rules::AccessDenideError, "You have no rights to access method `#{meth}`. Context for `#{context}`"
+    end
+
   end # can!
 
 end # Rules

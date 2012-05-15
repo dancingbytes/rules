@@ -12,12 +12,14 @@ module Rules
         require 'rules/mongoid/base'
       end
 
-    end # initializer
-
-    initializer "preload all application models" do |app|
-
       config.to_prepare do
+
+        if ::Rules::MONGOID
+          load 'rules/mongoid/setup.rb'
+        end
+
         ::Rules::Rails.preload_models(app)
+
       end # to_prepare
 
     end # initializer

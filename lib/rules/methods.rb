@@ -5,11 +5,9 @@ module Rules
 
     def can?(meth)
 
-      retutn false if meth.nil?
-      meth = meth.to_sym
-
-      return true unless ::Rules::List.has_rule_for?(::Rules.class_for(self), meth)
-      puts "[can?] #{self} -> #{meth}"
+      @rule_context ||= ::Rules.class_for(self)
+      return true unless ::Rules::List.has_rule_for?(@rule_context, meth)
+      ::UserRule.access_for(Rules.user, @rule_context, meth)
 
     end # can?
 
