@@ -31,11 +31,13 @@ module Rules
 
       def access_for(owner_id, module_name, rule_name)
 
-        where({
+        return false if owner_id.blank? || module_name.blank? || rule_name.blank?
+
+        !!where({
           :owner_id     => owner_id,
           :module_name  => module_name.to_s,
           :rule_name    => rule_name
-        }).first.try(:access) && true
+        }).first.try(:access)
 
       end # access_for
 
