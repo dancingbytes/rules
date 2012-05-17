@@ -68,6 +68,14 @@ module Rules
 
   end # can!
 
+  def list
+
+    l = ::Rules::List.list
+    l.keys.sort!
+    l
+
+  end # list
+
 end # Rules
 
 require 'rules/railtie' if defined?(::Rails)

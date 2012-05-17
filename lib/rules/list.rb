@@ -11,21 +11,23 @@ module Rules
     @methods = {}
     @groups  = {}
     @models  = {}
+    @aliases = {}
+    @lists   = {}
 
     def aliases(v)
 
-      @aliases = v if v.is_a?(Hash)
+      if v.is_a?(Hash)
+        restore_list
+        @aliases = v
+        update_list
+      end
       self
 
     end # aliases
 
-    def alias_for(v)
-      @aliases[v.to_s]
-    end # alias_for
-
-    def all
-      @models
-    end # all
+    def list
+      @lists
+    end # list
 
     def add_group(name, methods)
 
@@ -45,7 +47,7 @@ module Rules
         value = (value.is_a?(Array) ? value.map(&:to_sym) : [value.to_sym])
         @groups[key.to_sym] = value
 
-      end
+      end # each
 
       self
 
@@ -90,6 +92,8 @@ module Rules
       end
 
       @models[context][n] = m
+
+      add_to_list(context, n)
       add_methods(context, m)
 
       self
@@ -113,6 +117,41 @@ module Rules
       @methods[context].merge(methods)
 
     end # add_methods
+
+    def add_to_list(context, rule)
+
+      name = (@aliases[context] || context)
+
+      (@lists[name] ||= []) << {
+        :model => context,
+        :rule  => rule
+      }
+
+    end # add_to_list
+
+    def restore_list
+
+      @aliases.each do |key, value|
+
+        if v = @lists.delete(value)
+          @lists[key] = v
+        end
+
+      end # each
+
+    end # restore_list
+
+    def update_list
+
+      @aliases.each do |key, value|
+
+        if v = @lists.delete(key)
+          @lists[value] = v
+        end
+
+      end # each
+
+    end # update_list
 
   end # List
 

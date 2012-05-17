@@ -10,16 +10,16 @@ module Rules
 
       include ::Mongoid::Document
 
-      field :owner_id,    :type => ::BSON::ObjectId
-      field :model_name,  :type => ::String
-      field :rule_name,   :type => ::String
-      field :access,      :type => ::Boolean
+      field :owner_id,  :type => ::BSON::ObjectId
+      field :model,     :type => ::String
+      field :rule,      :type => ::String
+      field :access,    :type => ::Boolean
 
       index(
         [
-          [ :owner_id,    Mongo::ASCENDING ],
-          [ :model_name,  Mongo::ASCENDING ],
-          [ :rule_name,   Mongo::ASCENDING ]
+          [ :owner_id,  Mongo::ASCENDING ],
+          [ :model,     Mongo::ASCENDING ],
+          [ :rule,      Mongo::ASCENDING ]
         ],
         :name   => "owner_rule_indx",
         :unique => true
@@ -29,14 +29,14 @@ module Rules
 
     module ClassMethods
 
-      def access_for(owner_id, module_name, rule_name)
+      def access_for(owner_id, model, rule)
 
-        return false if owner_id.blank? || module_name.blank? || rule_name.blank?
+        return false if owner_id.blank? || model.blank? || rule.blank?
 
         !!where({
-          :owner_id     => owner_id,
-          :module_name  => module_name.to_s,
-          :rule_name    => rule_name
+          :owner_id => owner_id,
+          :model    => model.to_s,
+          :rule     => rule
         }).first.try(:access)
 
       end # access_for
