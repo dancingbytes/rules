@@ -1,55 +1,30 @@
 # encoding: utf-8
-require 'singleton'
 require 'set'
 
 module Rules
 
-  class List
+  module List
 
-    include Singleton
+    extend self
 
-    def initialize
+    @hash    = {}
+    @methods = {}
+    @groups  = {}
+    @models  = {}
 
-      @hash    = {}
-      @methods = {}
-      @groups  = {}
+    def aliases(v)
 
-    end # initialize
+      @aliases = v if v.is_a?(Hash)
+      self
 
-    class << self
+    end # aliases
 
-      def all
-        instance.all
-      end # all
-
-      def add_group(name, methods)
-        instance.add_group(name, methods)
-      end # add_group
-
-      def groups(hash)
-        instance.groups(hash)
-      end # groups
-
-      def has?(context)
-        instance[context]
-      end # has?
-
-      def [](context)
-        instance[context]
-      end # []
-
-      def []=(context, datas = {})
-        instance[context] = datas
-      end # []=
-
-      def has_rule_for?(context, method_name)
-        instance.has_rule_for?(context, method_name)
-      end # has_rule_for?
-
-    end # class << self
+    def alias_for(v)
+      @aliases[v.to_s]
+    end # alias_for
 
     def all
-      @hash
+      @models
     end # all
 
     def add_group(name, methods)
@@ -77,24 +52,25 @@ module Rules
     end # groups
 
     def has?(context)
-      !(@hash[context.to_s] || {}).empty?
+      !(@models[context.to_s] || {}).empty?
     end # has?
 
     def [](context)
-      @hash[context.to_s]
+      @models[context.to_s]
     end # []
 
     def []=(context, datas = {})
 
       context = context.to_s
-      @hash[context] ||= {}
+
+      @models[context] ||= {}
 
       n = datas[:name]
       m = datas[:methods] || []
       o = datas[:opts] || {}
 
-      unless @hash[context][n].nil?
-        raise ::Rules::DuplicateDefinitionError, "Rule `#{n}` already defined"
+      unless @models[context][n].nil?
+        raise ::Rules::DuplicateDefinitionError, "Rule `#{n}` already defined in `#{context}`."
       end
 
       unless (groups = (o[:group] || o[:groups])).nil?
@@ -110,10 +86,10 @@ module Rules
       m.compact!
 
       if m.empty?
-        raise ::Rules::ParamsError, "Rule `#{n}` have no methods or groups"
+        raise ::Rules::ParamsError, "Rule `#{n}` has no methods or groups."
       end
 
-      @hash[context][n] = m
+      @models[context][n] = m
       add_methods(context, m)
 
       self

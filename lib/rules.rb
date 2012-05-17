@@ -15,7 +15,7 @@ module Rules
   MONGOID = defined?(::Mongoid) ? true : false
   AR      = defined?(::ActiveRecord) ? true : false
 
-  attr :user_id, true
+  attr :owner_id, true
 
   def class_for(o)
 
@@ -38,6 +38,13 @@ module Rules
 
   end # add_group
 
+  def models_aliases(v)
+
+    ::Rules::List.aliases(v)
+    self
+
+  end # models_aliases
+
   def class_exists?(class_name)
 
     return false if class_name.blank?
@@ -55,8 +62,8 @@ module Rules
 
     return unless ::Rules::List.has_rule_for?(context, meth)
 
-    unless ::UserRule.access_for(::Rules.user_id, context, meth)
-      raise ::Rules::AccessDenideError, "You have no rights to access method `#{meth}`. Context for `#{context}`"
+    unless ::OwnerRule.access_for(::Rules.owner_id, context, meth)
+      raise ::Rules::AccessDenideError, "You have no rights to access method `#{meth}`. Context: `#{context}`"
     end
 
   end # can!

@@ -10,7 +10,7 @@ module Rules
 
       if ::Rules::MONGOID
         require 'rules/mongoid/base'
-        require 'rules/mongoid/user_rules'
+        require 'rules/mongoid/owner_rules'
       end
 
       config.to_prepare do
