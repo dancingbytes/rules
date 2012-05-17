@@ -12,7 +12,7 @@ module Rules
     @groups  = {}
     @models  = {}
     @aliases = {}
-    @lists   = {}
+    @lists   = []
 
     def aliases(v)
 
@@ -48,7 +48,6 @@ module Rules
         @groups[key.to_sym] = value
 
       end # each
-
       self
 
     end # groups
@@ -120,9 +119,8 @@ module Rules
 
     def add_to_list(context, rule)
 
-      name = (@aliases[context] || context)
-
-      (@lists[name] ||= []) << {
+      @lists << {
+        :alias => (@aliases[context] || context),
         :model => context,
         :rule  => rule
       }
@@ -133,8 +131,8 @@ module Rules
 
       @aliases.each do |key, value|
 
-        if v = @lists.delete(value)
-          @lists[key] = v
+        if (i = @lists.rindex { |v| v.model == key })
+          @lists[i][:alias] = key
         end
 
       end # each
@@ -145,8 +143,8 @@ module Rules
 
       @aliases.each do |key, value|
 
-        if v = @lists.delete(key)
-          @lists[value] = v
+        if (i = @lists.rindex { |v| v.model == key })
+          @lists[i][:alias] = value
         end
 
       end # each

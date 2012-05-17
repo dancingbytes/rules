@@ -71,8 +71,7 @@ module Rules
   def list
 
     l = ::Rules::List.list
-    l.keys.sort!
-    l
+    l.sort { |x,y| x[:alias] <=> y[:alias] }
 
   end # list
 
