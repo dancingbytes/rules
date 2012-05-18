@@ -70,9 +70,8 @@ module Rules
       m = datas[:methods] || []
       o = datas[:opts] || {}
 
-      unless @models[context][n].nil?
-        raise ::Rules::DuplicateDefinitionError, "Rule `#{n}` already defined in `#{context}`."
-      end
+      # Rule already defined
+      return self unless @models[context][n].nil?
 
       unless (groups = (o[:group] || o[:groups])).nil?
 

@@ -9,7 +9,6 @@ module Rules
   extend self
 
   class ParamsError < ::StandardError; end
-  class DuplicateDefinitionError < ::StandardError; end
   class AccessDenideError < ::StandardError; end
 
   MONGOID = defined?(::Mongoid) ? true : false
