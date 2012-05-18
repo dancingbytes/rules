@@ -25,6 +25,8 @@ module Rules
         :unique => true
       )
 
+      scope :by_owner, ->(owner_id) { where(:owner_id => owner_id) }
+
     end # include
 
     module ClassMethods
@@ -33,11 +35,12 @@ module Rules
 
         return false if owner_id.blank? || model.blank? || rule.blank?
 
-        !!where({
+        where({
           :owner_id => owner_id,
           :model    => model.to_s,
-          :rule     => rule
-        }).first.try(:access)
+          :rule     => rule,
+          :access   => true
+        }).exists?
 
       end # access_for
 

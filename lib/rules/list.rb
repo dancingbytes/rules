@@ -131,7 +131,7 @@ module Rules
 
       @aliases.each do |key, value|
 
-        if (i = @lists.rindex { |v| v.model == key })
+        if (i = @lists.rindex { |v| v[:model] == key })
           @lists[i][:alias] = key
         end
 
@@ -143,7 +143,7 @@ module Rules
 
       @aliases.each do |key, value|
 
-        if (i = @lists.rindex { |v| v.model == key })
+        if (i = @lists.rindex { |v| v[:model] == key })
           @lists[i][:alias] = value
         end
 
