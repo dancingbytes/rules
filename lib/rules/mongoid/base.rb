@@ -13,7 +13,7 @@ module Rules
           args << opts; opts = {}
         end
 
-        ::Rules::Builder.new(self, name, args.map(&:to_sym), opts, &block)
+        ::Rules::Builder.create(self, name, args.map(&:to_sym), opts, &block)
 
       end # rule
 

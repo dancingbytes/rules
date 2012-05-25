@@ -5,11 +5,11 @@ module Rules
 
     def can?(meth = @_context_for_method)
 
-      raise ::Rules::ParamsError, "Not defined method for check." if meth.nil? || meth.blank?
+      raise ::Rules::ParamsError, "No defined method for check." if meth.nil? || meth.blank?
 
       @rule_context ||= ::Rules.class_for(self)
-
       return true unless ::Rules::List.has_rule_for?(@rule_context, meth)
+
       r = ::OwnerRule.access_for(::Rules.owner_id, @rule_context, meth)
 
       if (block = ::Rules::List.block(@rule_context, meth))
@@ -21,7 +21,7 @@ module Rules
           r = block.call
           @_context_for_method = nil
 
-        end
+        end # unless
 
       end # if
 

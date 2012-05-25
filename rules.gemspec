@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.name        = 'rules'
   s.version     = Rules::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ['Tyralion']
+  s.authors     = ['redfield', 'Tyralion']
   s.email       = ['info@dancingbytes.ru']
   s.homepage    = 'https://github.com/dancingbytes/rules'
   s.summary     = 'User rights control system for rails.'

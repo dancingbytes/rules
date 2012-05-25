@@ -120,10 +120,7 @@ module Rules
     end # []=
 
     def has_rule_for?(context, method_name)
-
-      s = @methods[context.to_s]
-      s && s[:m].include?(method_name.to_sym)
-
+      @methods[context.to_s][:m].include?(method_name.to_sym)
     end # has_rule_for?
 
     def block(context, method_name)
