@@ -7,7 +7,7 @@ module Rules
 
     def create(context, name, methods = [], opts = {}, &block)
 
-      if ::Rules::List.has?(context)
+      unless ::Rules::List.has?(context)
 
         context.send :extend,  ::Rules::Interceptor::Base
         context.send :include, ::Rules::Methods

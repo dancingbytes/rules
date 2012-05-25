@@ -3,28 +3,26 @@ module Rules
 
   module Interceptor
 
-    class << self
+    extend self
 
-      def redefine(method_name, old_method, context, scope = nil)
+    def redefine(method_name, old_method, context, scope = nil)
 
-        scope ||= context
+      scope ||= context
 
-        return unless ::Rules::List.has_rule_for?(context, method_name)
+      return unless ::Rules::List.has_rule_for?(context, method_name)
 
-        scope.send :define_method, method_name do |*args, &block|
+      scope.send :define_method, method_name do |*args, &block|
 
-          unless self.can?(method_name)
-            raise ::Rules::AccessDenideError, "You have no rights to access method `#{method_name}`. Context: `#{self}`"
-          end
+        unless self.can?(method_name)
+          raise ::Rules::AccessDenideError, "You have no rights to access method `#{method_name}`. Context: `#{self}`"
+        end
 
-          old_method = old_method.bind(self) if old_method.is_a? ::UnboundMethod
-          old_method.call(*args, &block)
+        old_method = old_method.bind(self) if old_method.is_a? ::UnboundMethod
+        old_method.call(*args, &block)
 
-        end # send
+      end # send
 
-      end # redefine
-
-    end # class << self
+    end # redefine
 
     module Base
 
