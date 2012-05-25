@@ -1,56 +1,54 @@
 # encoding: utf-8
 module Rules
 
-  class Builder
+  module Builder
 
-    class << self
+    extend self
 
-      def create(context, name, methods = [], opts = {}, &block)
+    def create(context, name, methods = [], opts = {}, &block)
 
-        if ::Rules::List.has?(context)
+      if ::Rules::List.has?(context)
 
-          context.send :extend,  ::Rules::Interceptor::Base
-          context.send :include, ::Rules::Methods
-          context.send :extend,  ::Rules::Methods
+        context.send :extend,  ::Rules::Interceptor::Base
+        context.send :include, ::Rules::Methods
+        context.send :extend,  ::Rules::Methods
 
-        end # if
+      end # if
 
-        ::Rules::List[context] = {
-          :name    => name,
-          :methods => methods,
-          :opts    => opts,
-          :block   => block
-        }
+      ::Rules::List[context] = {
+        :name    => name,
+        :methods => methods,
+        :opts    => opts,
+        :block   => block
+      }
 
-        methods.each do |meth|
+      methods.each do |meth|
 
-          class_method(context, meth)    if context.respond_to?(meth, true)
-          instance_method(context, meth) if context.method_defined?(meth)
+        class_method(context, meth)    if context.respond_to?(meth, true)
+        instance_method(context, meth) if context.method_defined?(meth)
 
-        end # each
+      end # each
 
-      end # new
+    end # new
 
-      private
+    private
 
-      def instance_method(context, meth)
+    def instance_method(context, meth)
 
-        context.instance_variable_set(:@recursing, true)
-        ::Rules::Interceptor.redefine(meth, context.instance_method(meth), context)
-        context.instance_variable_set(:@recursing, nil)
+      context.instance_variable_set(:@recursing, true)
+      ::Rules::Interceptor.redefine(meth, context.instance_method(meth), context)
+      context.instance_variable_set(:@recursing, nil)
 
-      end # instance_method
+    end # instance_method
 
-      def class_method(context, meth)
+    def class_method(context, meth)
 
-        meta = class << context; self; end
-        context.instance_variable_set(:@recursing, true)
-        ::Rules::Interceptor.redefine(meth, context.method(meth), context, meta)
-        context.instance_variable_set(:@recursing, nil)
+      meta = class << context; self; end
+      context.instance_variable_set(:@recursing, true)
+      ::Rules::Interceptor.redefine(meth, context.method(meth), context, meta)
+      context.instance_variable_set(:@recursing, nil)
 
-      end # class_method
-
-    end # class << self
+    end # class_method
 
   end # Builder
 
