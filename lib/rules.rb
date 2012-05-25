@@ -57,16 +57,6 @@ module Rules
 
   end # class_exists?
 
-  def can!(context, meth)
-
-    return unless ::Rules::List.has_rule_for?(context, meth)
-
-    unless ::OwnerRule.access_for(::Rules.owner_id, context, meth)
-      raise ::Rules::AccessDenideError, "You have no rights to access method `#{meth}`. Context: `#{context}`"
-    end
-
-  end # can!
-
   def list
 
     l = ::Rules::List.list

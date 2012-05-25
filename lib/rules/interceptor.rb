@@ -13,7 +13,10 @@ module Rules
 
         scope.send :define_method, method_name do |*args, &block|
 
-          ::Rules::can!(context, method_name)
+          unless scope.can?(method_name)
+            raise ::Rules::AccessDenideError, "You have no rights to access method `#{method_name}`. Context: `#{context}`"
+          end
+
           old_method = old_method.bind(self) if old_method.is_a? ::UnboundMethod
           old_method.call(*args, &block)
 

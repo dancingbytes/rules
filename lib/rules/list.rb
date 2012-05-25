@@ -7,11 +7,21 @@ module Rules
 
     extend self
 
+    @methods = ::Hash.new{ |k,v|
+
+      k[v] = {
+
+        :m => Set.new,
+        :b => {}
+
+      }
+
+    }
+
     @hash    = {}
-    @methods = {}
     @groups  = {}
-    @models  = {}
     @aliases = {}
+    @models  = ::Hash.new{ |k,v| k[v] = {} }
     @lists   = []
 
     def aliases(v)
@@ -64,14 +74,17 @@ module Rules
 
       context = context.to_s
 
-      @models[context] ||= {}
-
       n = datas[:name]
-      m = datas[:methods] || []
       o = datas[:opts] || {}
+      m = datas[:methods] || []
+      b = datas[:block]
 
       # Rule already defined
       return self unless @models[context][n].nil?
+
+      if om = o.delete(:methods)
+        m.concat(om.is_a?(Array) ? om : [om])
+      end
 
       unless (groups = (o[:group] || o[:groups])).nil?
 
@@ -86,13 +99,21 @@ module Rules
       m.compact!
 
       if m.empty?
-        raise ::Rules::ParamsError, "Rule `#{n}` has no methods or groups."
+        raise ::Rules::ParamsError, "Rule `#{n}` has no methods or groups. Context: `#{context}`"
       end
 
       @models[context][n] = m
+      @methods[context][:m].merge(m)
 
-      add_to_list(context, n)
-      add_methods(context, m)
+      m.each do |el|
+        @methods[context][:b][el] = b
+      end if b
+
+      @lists << {
+        :alias => (@aliases[context] || context),
+        :model => context,
+        :rule  => n
+      }
 
       self
 
@@ -101,30 +122,15 @@ module Rules
     def has_rule_for?(context, method_name)
 
       s = @methods[context.to_s]
-      s && s.include?(method_name.to_sym)
+      s && s[:m].include?(method_name.to_sym)
 
     end # has_rule_for?
 
+    def block(context, method_name)
+      @methods[context.to_s][:b][method_name]
+    end # block
+
     private
-
-    def add_methods(context, methods)
-
-      return unless methods.is_a?(Array) || methods.empty?
-
-      @methods[context] ||= Set.new
-      @methods[context].merge(methods)
-
-    end # add_methods
-
-    def add_to_list(context, rule)
-
-      @lists << {
-        :alias => (@aliases[context] || context),
-        :model => context,
-        :rule  => rule
-      }
-
-    end # add_to_list
 
     def restore_list
 
