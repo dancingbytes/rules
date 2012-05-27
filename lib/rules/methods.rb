@@ -10,25 +10,22 @@ module Rules
       @rule_context ||= ::Rules.class_for(self)
       return true unless ::Rules::List.has_rule_for?(@rule_context, meth)
 
-      r = ::OwnerRule.access_for(::Rules.owner_id, @rule_context, meth)
+      result = nil
+      block  = ::Rules::List.block(@rule_context, meth)
 
-      if (block = ::Rules::List.block(@rule_context, meth))
+      if block && @_context_for_method.nil?
 
-        unless @_context_for_method
-
-          block = block.bind(self) if self.class == @rule_context
-          @_context_for_method = meth
-          r = block.call
-          @_context_for_method = nil
-
-        end # unless
+        block = block.bind(self) if self.class == @rule_context
+        @_context_for_method = meth
+        result = block.call
+        @_context_for_method = nil
 
       end # if
 
-      r
+      result || ::OwnerRule.access_for(::Rules.owner_id, @rule_context, meth)
 
     end # can?
 
   end # Methods
 
-end # Methods
+end # Rules
