@@ -59,8 +59,9 @@ module Rules
 
   def list
 
-    l = ::Rules::List.list
-    l.sort { |x,y| x[:alias] <=> y[:alias] }
+    ::Rules::List.list.sort { |x,y|
+      x[:alias] <=> y[:alias]
+    }
 
   end # list
 
