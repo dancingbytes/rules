@@ -31,12 +31,12 @@ module Rules
 
     module ClassMethods
 
-      def access_for(owner_id, model, rule)
+      def access_for(model, rule)
 
-        return false if owner_id.blank? || model.blank? || rule.blank?
+        return false if model.blank? || rule.blank?
 
         where({
-          :owner_id => owner_id,
+          :owner_id => ::Rules.owner_id,
           :model    => model.to_s,
           :rule     => rule,
           :access   => true

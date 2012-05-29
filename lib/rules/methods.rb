@@ -22,7 +22,7 @@ module Rules
 
       end # if
 
-      ::OwnerRule.access_for(::Rules.owner_id, @rule_context, meth)
+      ::OwnerRule.access_for(@rule_context, meth)
 
     end # can?
 
