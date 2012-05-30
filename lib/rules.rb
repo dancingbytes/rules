@@ -16,6 +16,26 @@ module Rules
 
   attr :owner_id, true
 
+  def off
+
+    @skip_checking = true
+    puts "*** Rules disable."
+    self
+
+  end # off
+
+  def on
+
+    @skip_checking = false
+    puts "*** Rules enable."
+    self
+
+  end # on
+
+  def off?
+    !!@skip_checking
+  end # off?
+
   def class_for(o)
 
     klass = o.class
@@ -68,3 +88,5 @@ module Rules
 end # Rules
 
 require 'rules/railtie' if defined?(::Rails)
+
+Rules.off if defined?(::IRB) || defined?(::Rake)

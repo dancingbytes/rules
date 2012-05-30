@@ -8,7 +8,7 @@ module Rules
       raise ::Rules::ParamsError, "No defined method for check." if meth.nil? || meth.blank?
 
       @rule_context ||= ::Rules.class_for(self)
-      return true unless ::Rules::List.has_rule_for?(@rule_context, meth)
+      return true if ::Rules.off? || !::Rules::List.has_rule_for?(@rule_context, meth)
 
       block = ::Rules::List.block(@rule_context, meth)
 
