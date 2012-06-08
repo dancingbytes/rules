@@ -11,14 +11,13 @@ module Rules
 
       k[v] = {
 
-        :m => Set.new,
-        :b => {}
+        :b => {},
+        :r => {}
 
       }
 
     }
 
-    @hash    = {}
     @groups  = {}
     @aliases = {}
     @models  = ::Hash.new{ |k,v| k[v] = {} }
@@ -103,11 +102,11 @@ module Rules
       end
 
       @models[context][n] = m
-      @methods[context][:m].merge(m)
 
       m.each do |el|
         @methods[context][:b][el] = b
-      end if b
+        @methods[context][:r][el] = n
+      end
 
       @lists << {
         :alias => (@aliases[context] || context),
@@ -119,13 +118,13 @@ module Rules
 
     end # []=
 
-    def has_rule_for?(context, method_name)
-      @methods[context.to_s][:m].include?(method_name.to_sym)
-    end # has_rule_for?
-
     def block(context, method_name)
       @methods[context.to_s][:b][method_name]
     end # block
+
+    def rule(context, method_name)
+      @methods[context.to_s][:r][method_name]
+    end # rule
 
     private
 

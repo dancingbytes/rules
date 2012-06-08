@@ -19,7 +19,7 @@ module Rules
   def off
 
     @skip_checking = true
-    puts "*** Rules disable."
+    puts "** Rules disable."
     self
 
   end # off
@@ -27,7 +27,7 @@ module Rules
   def on
 
     @skip_checking = false
-    puts "*** Rules enable."
+    puts "** Rules enable."
     self
 
   end # on

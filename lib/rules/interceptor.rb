@@ -9,7 +9,7 @@ module Rules
 
       scope ||= context
 
-      return unless ::Rules::List.has_rule_for?(context, method_name)
+      return unless ::Rules::List.rule(context, method_name)
 
       scope.send :define_method, method_name do |*args, &block|
 
