@@ -1,6 +1,6 @@
 # encoding: utf-8
 if Rules.class_exists?("OwnerRule")
-  OwnerRule.send(:include, Rules::OwnerRule)
+  OwnerRule.send(:include, ::Rules::OwnerRule)
 else
 
   class OwnerRule

@@ -36,6 +36,22 @@ module Rules
     !!@skip_checking
   end # off?
 
+  def skip(&block)
+
+    begin
+
+      before_skip_value = @skip_checking
+      @skip_checking = true
+      yield
+
+    ensure
+      @skip_checking = before_skip_value
+    end
+
+  end # skip
+
+  alias :skip_for :skip
+
   def class_for(o)
 
     klass = o.class
