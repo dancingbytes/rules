@@ -96,7 +96,7 @@ module Rules
   def list
 
     ::Rules::List.list.sort { |x,y|
-      x[:alias] <=> y[:alias]
+      x[:alias] <=> y[:alias] && x[:rule] <=> y[:rule]
     }
 
   end # list
