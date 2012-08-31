@@ -22,6 +22,7 @@ module Rules
     @aliases = {}
     @models  = ::Hash.new{ |k,v| k[v] = {} }
     @lists   = []
+    @rescue  = {}
 
     def aliases(v)
 
@@ -125,6 +126,13 @@ module Rules
     def rule(context, method_name)
       @methods[context.to_s][:r][method_name]
     end # rule
+
+    def rescue(context, &block)
+
+      @rescue[context] = block if block_given?
+      @rescue[context]
+
+    end # rescue
 
     private
 

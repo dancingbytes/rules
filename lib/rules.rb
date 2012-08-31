@@ -3,6 +3,9 @@ require 'rules/list'
 require 'rules/interceptor'
 require 'rules/methods'
 require 'rules/builder'
+require 'rules/object'
+
+require 'rules/railtie' if defined?(::Rails)
 
 module Rules
 
@@ -102,7 +105,3 @@ module Rules
   end # list
 
 end # Rules
-
-require 'rules/railtie' if defined?(::Rails)
-
-Rules.off if defined?(::IRB) || defined?(::Rake)

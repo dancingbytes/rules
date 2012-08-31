@@ -9,7 +9,6 @@ module Rules
     initializer 'rules' do |app|
 
       if ::Rules::MONGOID
-        require 'rules/mongoid/base'
         require 'rules/mongoid/owner_rules'
       end
 

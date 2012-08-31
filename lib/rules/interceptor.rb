@@ -14,11 +14,24 @@ module Rules
       scope.send :define_method, method_name do |*args, &block|
 
         unless self.can?(method_name)
-          raise ::Rules::AccessDenideError, "You have no rights to access method `#{method_name}`. Context: `#{self}`"
-        end
 
-        old_method = old_method.bind(self) if old_method.is_a? ::UnboundMethod
-        old_method.call(*args, &block)
+          error = ::Rules::AccessDenideError.new("You have no rights to access method `#{method_name}`. Context: `#{self}`")
+
+          if (rlr = ::Rules::List.rescue(context))
+
+            rlr = rlr.bind(self)
+            rlr.call(error)
+
+          else
+            raise error
+          end
+
+        else
+
+          old_method = old_method.bind(self) if old_method.is_a? ::UnboundMethod
+          old_method.call(*args, &block)
+
+        end # unless
 
       end # send
 

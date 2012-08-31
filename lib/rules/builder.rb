@@ -5,7 +5,7 @@ module Rules
 
     extend self
 
-    def create(context, name, methods = [], opts = {}, &block)
+    def create_rule(context, name, methods = [], opts = {}, &block)
 
       unless ::Rules::List.has?(context)
 
@@ -29,7 +29,16 @@ module Rules
 
       end # each
 
-    end # new
+      self
+
+    end # create_rule
+
+    def create_rescue(context, &block)
+
+      ::Rules::List.rescue(context, &block)
+      self
+
+    end # create_rescue
 
     private
 
