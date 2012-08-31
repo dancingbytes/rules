@@ -5,8 +5,6 @@ require 'rules/methods'
 require 'rules/builder'
 require 'rules/object'
 
-require 'rules/railtie' if defined?(::Rails)
-
 module Rules
 
   extend self
@@ -105,3 +103,5 @@ module Rules
   end # list
 
 end # Rules
+
+require 'rules/railtie' if defined?(::Rails)

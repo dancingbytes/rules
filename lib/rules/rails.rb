@@ -15,6 +15,14 @@ module Rules
 
       end # each
 
+      app.config.paths["app/controllers"].each do |path|
+
+        Dir.glob("#{path}/**/*.rb").sort.each do |file|
+          require_dependency(file.gsub("#{path}/" , "").gsub(".rb", ""))
+        end
+
+      end # each
+
     end # preload_models
 
   end # Rails
