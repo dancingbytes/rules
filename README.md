@@ -52,7 +52,7 @@ Rails:  3.0, 3.1, 3.2
 
       rule "Просмотр", :show
 
-      rule_rescue do |exception|
+      rule_rescue
         render :file => "#{Rails.root}/public/422.html", :status => 422, :layout => false
       end
 
@@ -68,7 +68,7 @@ Rails:  3.0, 3.1, 3.2
       rule "Изменение", :group => :change
       rule "Удаление",  :destroy_all, :group => :destroy
 
-      rule_rescue do |exception|
+      rule_rescue
         # do thometing...
       end
 

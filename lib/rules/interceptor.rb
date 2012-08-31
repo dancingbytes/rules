@@ -15,15 +15,13 @@ module Rules
 
         unless self.can?(method_name)
 
-          error = ::Rules::AccessDenideError.new("You have no rights to access method `#{method_name}`. Context: `#{self}`")
-
           if (rlr = ::Rules::List.rescue(context))
 
             rlr = rlr.bind(self)
-            rlr.call(error)
+            rlr.call
 
           else
-            raise error
+            raise ::Rules::AccessDenideError.new("You have no rights to access method `#{method_name}`. Context: `#{self}`")
           end
 
         else
