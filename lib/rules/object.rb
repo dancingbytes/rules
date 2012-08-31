@@ -5,21 +5,14 @@ module Rules
 
     private
 
-    def rule(name, *args, opts, &block)
+    def rules(&block)
 
-      raise ::Rules::ParamsError, "First parameter must be a string" unless name.is_a?(String)
+      return if self.instance_of?(::Object)
 
-      unless opts.is_a?(Hash)
-        args << opts; opts = {}
-      end
+      r = ::Rules::Builder.new(self)
+      r.instance_eval &block
 
-      ::Rules::Builder.create_rule(self, name, args.map(&:to_sym), opts, &block)
-
-    end # rule
-
-    def rule_rescue(&block)
-      ::Rules::Builder.create_rescue(self, &block)
-    end # rule_rescue
+    end # rules
 
   end # Object
 

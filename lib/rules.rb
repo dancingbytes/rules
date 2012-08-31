@@ -67,20 +67,6 @@ module Rules
 
   end # groups
 
-  def add_group(name, *args)
-
-    ::Rules::List.add_group(name, args)
-    self
-
-  end # add_group
-
-  def models_aliases(v)
-
-    ::Rules::List.aliases(v)
-    self
-
-  end # models_aliases
-
   def class_exists?(class_name)
 
     return false if class_name.blank?

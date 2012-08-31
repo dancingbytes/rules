@@ -1,21 +1,33 @@
 # encoding: utf-8
 module Rules
 
-  module Builder
+  class Builder < ::BasicObject
 
-    extend self
+    def initialize(context)
+      @context = context
+    end # new
 
-    def create_rule(context, name, methods = [], opts = {}, &block)
+    private
 
-      unless ::Rules::List.has?(context)
+    def rule(name, *args, opts, &block)
 
-        context.send :extend,  ::Rules::Interceptor::Base
-        context.send :include, ::Rules::Methods
-        context.send :extend,  ::Rules::Methods
+      raise ::Rules::ParamsError, "First parameter must be a string" unless name.is_a?(::String)
+
+      unless opts.is_a?(::Hash)
+        args << opts; opts = {}
+      end
+
+      methods = args.map(&:to_sym)
+
+      unless ::Rules::List.has?(@context)
+
+        @context.send :extend,  ::Rules::Interceptor::Base
+        @context.send :include, ::Rules::Methods
+        @context.send :extend,  ::Rules::Methods
 
       end # if
 
-      ::Rules::List[context] = {
+      ::Rules::List[@context] = {
         :name    => name,
         :methods => methods,
         :opts    => opts,
@@ -24,38 +36,35 @@ module Rules
 
       methods.each do |meth|
 
-        class_method(context, meth)    if context.respond_to?(meth, true)
-        instance_method(context, meth) if context.method_defined?(meth)
+        class_method(meth)    if @context.respond_to?(meth, true)
+        instance_method(meth) if @context.method_defined?(meth)
 
       end # each
 
-      self
+    end # rule
 
-    end # create_rule
+    def reject(&block)
+      ::Rules::List.reject(@context, &block)
+    end # reject
 
-    def create_rescue(context, &block)
+    def title(v)
+      ::Rules::List.titles(@context, v)
+    end # title
 
-      ::Rules::List.rescue(context, &block)
-      self
+    def instance_method(meth)
 
-    end # create_rescue
-
-    private
-
-    def instance_method(context, meth)
-
-      context.instance_variable_set(:@recursing, true)
-      ::Rules::Interceptor.redefine(meth, context.instance_method(meth), context)
-      context.instance_variable_set(:@recursing, nil)
+      @context.instance_variable_set(:@recursing, true)
+      ::Rules::Interceptor.redefine(meth, @context.instance_method(meth), @context)
+      @context.instance_variable_set(:@recursing, nil)
 
     end # instance_method
 
-    def class_method(context, meth)
+    def class_method(meth)
 
-      meta = class << context; self; end
-      context.instance_variable_set(:@recursing, true)
-      ::Rules::Interceptor.redefine(meth, context.method(meth), context, meta)
-      context.instance_variable_set(:@recursing, nil)
+      meta = class << @context; self; end
+      @context.instance_variable_set(:@recursing, true)
+      ::Rules::Interceptor.redefine(meth, @context.method(meth), @context, meta)
+      @context.instance_variable_set(:@recursing, nil)
 
     end # class_method
 

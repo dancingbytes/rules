@@ -18,10 +18,14 @@ Rails:  3.0, 3.1, 3.2
 
       include Mongoid::Document
 
-      rule "Просмотр",  :all, :find, :count
-      rule "Создание",  :group => :create
-      rule "Изменение", :group => :change
-      rule "Удаление",  :destroy_all, :group => :destroy
+      rules do
+
+        rule "Просмотр",  :all, :find, :count
+        rule "Создание",  :group => :create
+        rule "Изменение", :group => :change
+        rule "Удаление",  :destroy_all, :group => :destroy
+
+      end
 
     end
 
@@ -29,7 +33,11 @@ Rails:  3.0, 3.1, 3.2
     # or in rails controller
     class ItemsController < ApplicationController
 
-      rule "Просмотр", :show
+      rules do
+
+        rule "Просмотр", :show
+
+      end
 
     end
 
@@ -39,7 +47,9 @@ Rails:  3.0, 3.1, 3.2
     # 1. Use rails method `rescue_from`:
     class ItemsController < ApplicationController
 
-      rule "Просмотр", :show
+      rules do
+        rule "Просмотр", :show
+      end
 
       rescue_from ::Rules::AccessDenideError do |exception|
         render :file => "#{Rails.root}/public/422.html", :status => 422, :layout => false
@@ -47,34 +57,42 @@ Rails:  3.0, 3.1, 3.2
 
     end
 
-    # 2. Use gem method `rule_rescue`:
+    # 2. Use gem method `reject`:
     class ItemsController < ApplicationController
 
-      rule "Просмотр", :show
+      rules do
 
-      rule_rescue
-        render :file => "#{Rails.root}/public/422.html", :status => 422, :layout => false
+        rule "Просмотр", :show
+
+        reject do
+          render :file => "#{Rails.root}/public/422.html", :status => 422, :layout => false
+        end
+
       end
 
     end
 
-    # Method `rule_rescue` is useful into model:
+    # Method `reject` is useful into model:
     class User
 
       include Mongoid::Document
 
-      rule "Просмотр",  :all, :find, :count
-      rule "Создание",  :group => :create
-      rule "Изменение", :group => :change
-      rule "Удаление",  :destroy_all, :group => :destroy
+      rules do
 
-      rule_rescue
-        # do thometing...
+        rule "Просмотр",  :all, :find, :count
+        rule "Создание",  :group => :create
+        rule "Изменение", :group => :change
+        rule "Удаление",  :destroy_all, :group => :destroy
+
+        reject do
+          # do thometing...
+        end
+
       end
 
     end
 
-    # When you use method `rule_rescue`, gem doesn`t raise exception, just call block from `rule_rescue`.
+    # When you use method `reject`, gem doesn`t raise exception, just call block from `reject`.
 
 
     # You may create file into "/path/to/you_app/config/initializers" with content:

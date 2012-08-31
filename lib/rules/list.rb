@@ -19,33 +19,28 @@ module Rules
     }
 
     @groups  = {}
-    @aliases = {}
+    @titles  = {}
     @models  = ::Hash.new{ |k,v| k[v] = {} }
     @lists   = []
-    @rescue  = {}
+    @reject  = {}
 
-    def aliases(v)
+    def titles(context, name)
 
-      if v.is_a?(Hash)
-        restore_list
-        @aliases = v
-        update_list
+      context = context.to_s
+
+      @titles[context] = name
+
+      if (i = @lists.rindex { |v| v[:model] == context })
+        @lists[i][:title] = name
       end
+
       self
 
-    end # aliases
+    end # titles
 
     def list
       @lists
     end # list
-
-    def add_group(name, methods)
-
-      methods = [methods] unless methods.is_a?(Array)
-      @groups[name.to_sym] = methods.map(&:to_sum)
-      self
-
-    end # add_group
 
     def groups(hash = {})
 
@@ -110,7 +105,7 @@ module Rules
       end
 
       @lists << {
-        :alias => (@aliases[context] || context),
+        :title => (@titles[context] || context),
         :model => context,
         :rule  => n
       }
@@ -127,21 +122,22 @@ module Rules
       @methods[context.to_s][:r][method_name]
     end # rule
 
-    def rescue(context, &block)
+    def reject(context, &block)
 
-      @rescue[context] = block if block_given?
-      @rescue[context]
+      @reject[context] = block if block_given?
+      @reject[context]
 
-    end # rescue
+    end # reject
 
+=begin
     private
 
     def restore_list
 
-      @aliases.each do |key, value|
+      @titles.each do |key, value|
 
         if (i = @lists.rindex { |v| v[:model] == key })
-          @lists[i][:alias] = key
+          @lists[i][:title] = key
         end
 
       end # each
@@ -150,15 +146,16 @@ module Rules
 
     def update_list
 
-      @aliases.each do |key, value|
+      @titles.each do |key, value|
 
         if (i = @lists.rindex { |v| v[:model] == key })
-          @lists[i][:alias] = value
+          @lists[i][:title] = value
         end
 
       end # each
 
     end # update_list
+=end
 
   end # List
 
