@@ -105,6 +105,19 @@ Rails:  3.0, 3.1, 3.2
     })
 
 
+    # Customize rules.
+    # Edit banner only by owner or user has rights.
+    rules do
+
+      title "Баннеры"
+
+      rule "Редактирование",  :save do
+        self.user_id == User.current.id || self.can?
+      end
+
+    end
+
+
 ### License
 
 Authors: redfield (up.redfield@gmail.com), Tyralion (piliaiev@gmail.com)
