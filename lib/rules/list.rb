@@ -23,6 +23,7 @@ module Rules
     @models  = ::Hash.new{ |k,v| k[v] = {} }
     @lists   = []
     @reject  = {}
+    @depends = ::Hash.new{ |k,v| k[v] = ->() { true } }
 
     def titles(context, name)
 
@@ -124,38 +125,31 @@ module Rules
 
     def reject(context, &block)
 
+      context = context.to_s
       @reject[context] = block if block_given?
       @reject[context]
 
     end # reject
 
-=begin
-    private
+    def depends(context, klass, meth)
 
-    def restore_list
+      context = context.to_s
 
-      @titles.each do |key, value|
+      # Если указываем на самого себя
+      return true if context.to_sym == klass
 
-        if (i = @lists.rindex { |v| v[:model] == key })
-          @lists[i][:title] = key
-        end
+      @depends[context] = ->() {
 
-      end # each
+        return true unless ::Rules::class_exists?(klass)
+        return ::Object.const_get(klass).can?(meth)
 
-    end # restore_list
+      }
 
-    def update_list
+    end # depends
 
-      @titles.each do |key, value|
-
-        if (i = @lists.rindex { |v| v[:model] == key })
-          @lists[i][:title] = value
-        end
-
-      end # each
-
-    end # update_list
-=end
+    def dependence_satisfied?(context)
+      @depends[context.to_s].call
+    end # dependence_satisfied?
 
   end # List
 

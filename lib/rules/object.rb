@@ -18,4 +18,6 @@ module Rules
 
 end # Rules
 
-::Object.send(:extend, ::Rules::Object)
+::Object.send(:extend,  ::Rules::Object)
+::Object.send(:include, ::Rules::Methods)
+::Object.send(:extend,  ::Rules::Methods)

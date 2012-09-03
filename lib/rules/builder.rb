@@ -20,11 +20,7 @@ module Rules
       methods = args.map(&:to_sym)
 
       unless ::Rules::List.has?(@context)
-
         @context.send :extend,  ::Rules::Interceptor::Base
-        @context.send :include, ::Rules::Methods
-        @context.send :extend,  ::Rules::Methods
-
       end # if
 
       ::Rules::List[@context] = {
@@ -50,6 +46,10 @@ module Rules
     def title(v)
       ::Rules::List.titles(@context, v)
     end # title
+
+    def before(klass, meth)
+      ::Rules::List.depends(@context, klass.to_sym, meth.to_sym)
+    end # before
 
     def instance_method(meth)
 

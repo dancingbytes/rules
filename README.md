@@ -117,6 +117,39 @@ Rails:  3.0, 3.1, 3.2
 
     end
 
+    # If one rule depends on other rule. you can use method `before` like
+
+    # Master
+    class AdminController < ApplicationController
+
+      rules do
+
+        title "Администрирование"
+
+        rule "Вход",  :index
+
+      end
+
+    end
+
+    # Slave
+    class ItemsController < ApplicationController
+
+      rules do
+
+        title "Товары"
+
+        before :AdminController, :index
+
+        rule "Просмотр",  :index, :show
+        rule "Создание",  :new, :create
+        rule "Редактирование",  :edit, :update
+        rule "Удаление",  :destroy
+
+      end
+
+    end
+
 
 ### License
 

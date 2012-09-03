@@ -26,7 +26,8 @@ module Rules
 
         else
 
-          old_method = old_method.bind(self) if old_method.is_a? ::UnboundMethod
+          old_method = old_method.unbind      unless old_method.is_a? ::UnboundMethod
+          old_method = old_method.bind(self)
           old_method.call(*args, &block)
 
         end # unless
