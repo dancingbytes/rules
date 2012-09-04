@@ -9,13 +9,13 @@ module Rules
 
       scope ||= context
 
-      return unless ::Rules::List.rule(context, method_name)
+      return unless ::Rules::Config.rule(context, method_name)
 
       scope.send :define_method, method_name do |*args, &block|
 
         unless self.can?(method_name)
 
-          if (rblock = ::Rules::List.reject(context))
+          if (rblock = ::Rules::Config.reject(context))
 
             rblock = rblock.bind(self)
             rblock.call

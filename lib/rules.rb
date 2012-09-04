@@ -1,9 +1,8 @@
 # encoding: utf-8
-require 'rules/list'
+require 'rules/config'
+require 'rules/builder'
 require 'rules/interceptor'
 require 'rules/methods'
-require 'rules/builder'
-require 'rules/object'
 
 module Rules
 
@@ -62,7 +61,7 @@ module Rules
 
   def groups(hash)
 
-    ::Rules::List.groups(hash)
+    ::Rules::Config.groups(hash)
     self
 
   end # groups
@@ -82,7 +81,7 @@ module Rules
 
   def list
 
-    ::Rules::List.list.sort { |x,y|
+    ::Rules::Config.list.sort { |x,y|
       x[:alias] <=> y[:alias] && x[:rule] <=> y[:rule]
     }
 

@@ -19,11 +19,11 @@ module Rules
 
       methods = args.map(&:to_sym)
 
-      unless ::Rules::List.has?(@context)
+      unless ::Rules::Config.has?(@context)
         @context.send :extend,  ::Rules::Interceptor::Base
       end # if
 
-      ::Rules::List[@context] = {
+      ::Rules::Config[@context] = {
         :name    => name,
         :methods => methods,
         :opts    => opts,
@@ -40,15 +40,15 @@ module Rules
     end # rule
 
     def reject(&block)
-      ::Rules::List.reject(@context, &block)
+      ::Rules::Config.reject(@context, &block)
     end # reject
 
     def title(v)
-      ::Rules::List.titles(@context, v)
+      ::Rules::Config.titles(@context, v)
     end # title
 
     def before(klass, meth)
-      ::Rules::List.depends(@context, klass.to_sym, meth.to_sym)
+      ::Rules::Config.depends(@context, klass.to_sym, meth.to_sym)
     end # before
 
     def instance_method(meth)

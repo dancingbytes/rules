@@ -1,23 +1,11 @@
 # encoding: utf-8
-require 'set'
-
 module Rules
 
-  module List
+  module Config
 
     extend self
 
-    @methods = ::Hash.new{ |k,v|
-
-      k[v] = {
-
-        :b => {},
-        :r => {}
-
-      }
-
-    }
-
+    @methods = ::Hash.new{ |k,v| k[v] = { :b => {},  :r => {} } }
     @groups  = {}
     @titles  = {}
     @models  = ::Hash.new{ |k,v| k[v] = {} }
@@ -151,6 +139,6 @@ module Rules
       @depends[context.to_s].call
     end # dependence_satisfied?
 
-  end # List
+  end # Config
 
 end # Rules
