@@ -25,7 +25,7 @@ module Rules
       # Если правила выключены -- действие разрешено
       return true if ::Rules.off?
 
-      # Выбираем класс, если  это экземпляр класса
+      # Выбираем класс, если это экземпляр класса
       unless @rule_context
 
         klass = self.class
@@ -46,7 +46,7 @@ module Rules
 
       # Выполняем блок (расширяющий/уточняюшщий правило), если он есть и, если мы уже
       # не в процессе выполнения этого блока.
-      if rule[:block] && @_context_for_method.nil?
+      if block && @_context_for_method.nil?
 
         @_context_for_method = meth
         block   = block.bind(self) if self.class == @rule_context
