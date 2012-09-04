@@ -101,7 +101,6 @@ module Rules
       @lists << {
 
         :title => (@titles[context] || context),
-        :model => context,
         :rule  => n,
         :key   => key
 

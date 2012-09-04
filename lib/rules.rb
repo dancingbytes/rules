@@ -64,6 +64,10 @@ module Rules
 
   end # list
 
+  def each(&block)
+    list.each(&block)
+  end # list
+
   def access_for(&block)
     @access_for = block
   end # access_for
