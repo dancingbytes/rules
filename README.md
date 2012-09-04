@@ -151,6 +151,17 @@ Rails:  3.0, 3.1, 3.2
     end
 
 
+    # You may create own rule checker on file into "/path/to/you_app/config/initializers", like this:
+    Rules.access_for do |key|
+
+      MyRuleChecker.where({
+        :key      => key,
+        :user_id  => MyUser.current.id
+        :access   => true
+      }).exists?
+
+    end # access_for
+
 ### License
 
 Authors: redfield (up.redfield@gmail.com), Tyralion (piliaiev@gmail.com)

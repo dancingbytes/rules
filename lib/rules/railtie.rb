@@ -1,5 +1,4 @@
 # encoding: utf-8
-require 'rules/rails'
 require 'rails/railtie'
 
 module Rules
@@ -8,17 +7,25 @@ module Rules
 
     initializer 'rules' do |app|
 
-      if ::Rules::MONGOID
-        require 'rules/mongoid/owner_rules'
-      end
-
       config.to_prepare do
 
-        if ::Rules::MONGOID
-          load 'rules/mongoid/setup.rb'
-        end
+        # preload rails` models
+        app.config.paths["app/models"].each do |path|
 
-        ::Rules::Rails.preload_models(app)
+          Dir.glob("#{path}/**/*.rb").sort.each do |file|
+            require_dependency(file.gsub("#{path}/" , "").gsub(".rb", ""))
+          end
+
+        end # each
+
+        # preload rails` controllers
+        app.config.paths["app/controllers"].each do |path|
+
+          Dir.glob("#{path}/**/*.rb").sort.each do |file|
+            require_dependency(file.gsub("#{path}/" , "").gsub(".rb", ""))
+          end
+
+        end # each
 
       end # to_prepare
 

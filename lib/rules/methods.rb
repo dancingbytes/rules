@@ -25,20 +25,28 @@ module Rules
       # Если правила выключены -- действие разрешено
       return true if ::Rules.off?
 
-      @rule_context ||= ::Rules.class_for(self)
+      # Выбираем класс, если  это экземпляр класса
+      unless @rule_context
 
-      rule = ::Rules::Config.rule(@rule_context, meth)
+        klass = self.class
+        @rule_context = (klass === klass.class) ? self : klass
+
+      end # unless
+
+      rule = ::Rules::Config.get_by(@rule_context, meth)
+
       # Если правила не существует -- действие разрешено
       return true unless rule
 
       # Если зависимое правило не выполнено -- действие запрещено.
       return false unless ::Rules::Config.dependence_satisfied?(@rule_context)
 
-      block = ::Rules::Config.block(@rule_context, meth)
+      block = rule[:block]
+      key   = rule[:key]
 
       # Выполняем блок (расширяющий/уточняюшщий правило), если он есть и, если мы уже
       # не в процессе выполнения этого блока.
-      if block && @_context_for_method.nil?
+      if rule[:block] && @_context_for_method.nil?
 
         @_context_for_method = meth
         block   = block.bind(self) if self.class == @rule_context
@@ -48,8 +56,8 @@ module Rules
 
       end # if
 
-      # Выбираем результат из базы
-      ::OwnerRule.access_for(@rule_context, rule)
+      # Проверяем разрешение
+      ::Rules.accept_for?(key)
 
     end # can?
 

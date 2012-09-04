@@ -9,7 +9,7 @@ module Rules
 
       scope ||= context
 
-      return unless ::Rules::Config.rule(context, method_name)
+      return unless ::Rules::Config.exists?(context, method_name)
 
       scope.send :define_method, method_name do |*args, &block|
 

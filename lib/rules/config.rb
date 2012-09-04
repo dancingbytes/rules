@@ -5,7 +5,9 @@ module Rules
 
     extend self
 
-    @methods = ::Hash.new{ |k,v| k[v] = { :b => {},  :r => {} } }
+    PACK_KEYS = 'H*H*'.freeze
+
+    @methods = ::Hash.new{ |k,v| k[v] = {} } # ::Hash.new{ |k,v| k[v] = { :b => {}, :k => {} } }
     @groups  = {}
     @titles  = {}
     @models  = ::Hash.new{ |k,v| k[v] = {} }
@@ -62,6 +64,7 @@ module Rules
       o = datas[:opts] || {}
       m = datas[:methods] || []
       b = datas[:block]
+      key = generate_key(context, n)
 
       # Rule already defined
       return self unless @models[context][n].nil?
@@ -89,27 +92,32 @@ module Rules
       @models[context][n] = m
 
       m.each do |el|
-        @methods[context][:b][el] = b
-        @methods[context][:r][el] = n
+        @methods[context][el] = {
+          :block => b,
+          :key   => key
+        }
       end
 
       @lists << {
+
         :title => (@titles[context] || context),
         :model => context,
-        :rule  => n
-      }
+        :rule  => n,
+        :key   => key
 
-      self
+      }
 
     end # []=
 
-    def block(context, method_name)
-      @methods[context.to_s][:b][method_name]
-    end # block
+    def get_by(context, method_name)
+      @methods[context.to_s][method_name]
+    end # get_by
 
-    def rule(context, method_name)
-      @methods[context.to_s][:r][method_name]
-    end # rule
+    def exists?(context, method_name)
+      !get_by(context, method_name).nil?
+    end # exists?
+
+    alias exist? exists?
 
     def reject(context, &block)
 
@@ -128,7 +136,7 @@ module Rules
 
       @depends[context] = ->() {
 
-        return true unless ::Rules::class_exists?(klass)
+        return true unless class_exists?(klass)
         return ::Object.const_get(klass).can?(meth)
 
       }
@@ -138,6 +146,31 @@ module Rules
     def dependence_satisfied?(context)
       @depends[context.to_s].call
     end # dependence_satisfied?
+
+    private
+
+    def generate_key(context, method_name)
+
+      [context, method_name].
+        pack(::Rules::Config::PACK_KEYS).
+        bytes.
+        map { |b| "%02X" % b }.
+        join('')
+
+    end # generate_key
+
+    def class_exists?(class_name)
+
+      return false if class_name.blank?
+
+      begin
+        ::Object.const_defined?(class_name) ? ::Object.const_get(class_name) : ::Object.const_missing(class_name)
+      rescue => e
+        return false if e.instance_of?(::NameError)
+        raise e
+      end
+
+    end # class_exists?
 
   end # Config
 

@@ -10,11 +10,11 @@ module Rules
 
   class ParamsError < ::StandardError; end
   class AccessDenideError < ::StandardError; end
+  class NotImplementedError < ::StandardError; end
 
-  MONGOID = defined?(::Mongoid) ? true : false
-  AR      = defined?(::ActiveRecord) ? true : false
-
-  attr :owner_id, true
+  @access_for = ->(key) {
+    raise ::Rules::NotImplementedError, "Use method Rules.access_for to set rules checker!"
+  }
 
   def off
 
@@ -52,32 +52,9 @@ module Rules
 
   alias :skip_for :skip
 
-  def class_for(o)
-
-    klass = o.class
-    klass == klass.class ? o : klass
-
-  end # class_for
-
   def groups(hash)
-
     ::Rules::Config.groups(hash)
-    self
-
   end # groups
-
-  def class_exists?(class_name)
-
-    return false if class_name.blank?
-
-    begin
-      ::Object.const_defined?(class_name) ? ::Object.const_get(class_name) : ::Object.const_missing(class_name)
-    rescue => e
-      return false if e.instance_of?(::NameError)
-      raise e
-    end
-
-  end # class_exists?
 
   def list
 
@@ -86,6 +63,20 @@ module Rules
     }
 
   end # list
+
+  def access_for(&block)
+    @access_for = block
+  end # access_for
+
+  alias :access           :access_for
+  alias :check_access     :access_for
+  alias :check_access_for :access_for
+
+  def accept_for?(key)
+    @access_for.call(key) && true
+  end # accept_for?
+
+  alias :accept? :accept_for?
 
 end # Rules
 
