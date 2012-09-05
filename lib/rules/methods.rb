@@ -18,7 +18,15 @@ module Rules
 
   module InstanceMethods
 
-    def can?(meth = @_context_for_method)
+    def can?(*args)
+
+      if args.length == 2
+        object  = ::Object.const_get(args[0].to_sym)
+        meth    = args[1] || @_context_for_method
+      else
+        object  = self
+        meth    = args[0] || @_context_for_method
+      end
 
       raise ::Rules::ParamsError, "No defined method for check." if meth.nil? || meth.blank?
 
@@ -28,8 +36,8 @@ module Rules
       # Выбираем класс, если это экземпляр класса
       unless @rule_context
 
-        klass = self.class
-        @rule_context = (klass === klass.class) ? self : klass
+        klass = object.class
+        @rule_context = (klass === klass.class) ? object : klass
 
       end # unless
 

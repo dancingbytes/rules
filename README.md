@@ -162,6 +162,16 @@ Rails:  3.0, 3.1, 3.2
 
     end # access_for
 
+    # Check rule`s permition
+    # 1. For explicit class
+    User.can?(:all)
+
+    # 2. Give class from context
+    can?(:all)
+
+    # 3. From other class (context class is not User)
+    can?(:User, :all)
+
 ### License
 
 Authors: redfield (up.redfield@gmail.com), Tyralion (piliaiev@gmail.com)
