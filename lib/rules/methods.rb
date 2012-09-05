@@ -57,7 +57,7 @@ module Rules
       end # if
 
       # Проверяем разрешение
-      ::Rules.accept_for?(key)
+      ::Rules.allow?(key)
 
     end # can?
 

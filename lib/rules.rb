@@ -12,8 +12,8 @@ module Rules
   class AccessDenideError < ::StandardError; end
   class NotImplementedError < ::StandardError; end
 
-  @access_for = ->(key) {
-    raise ::Rules::NotImplementedError, "Use method Rules.access_for to set rules checker!"
+  @check_permission_block = ->(key) {
+    raise ::Rules::NotImplementedError, "Use method Rules.check_permission(&block) to set rules checker!"
   }
 
   def off
@@ -68,19 +68,15 @@ module Rules
     list.each(&block)
   end # list
 
-  def access_for(&block)
-    @access_for = block
-  end # access_for
+  def check_permission(&block)
+    @check_permission_block = block
+  end # check_permission
 
-  alias :access           :access_for
-  alias :check_access     :access_for
-  alias :check_access_for :access_for
+  def allow?(key)
+    @check_permission_block.call(key) && true
+  end # allow?
 
-  def accept_for?(key)
-    @access_for.call(key) && true
-  end # accept_for?
-
-  alias :accept? :accept_for?
+  alias :accept? :allow?
 
 end # Rules
 
